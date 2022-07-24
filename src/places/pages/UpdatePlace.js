@@ -6,6 +6,7 @@ import Button from "../../shared/components/FormElements/Button";
 import Card from "../../shared/components/UIElements/Card";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
+import ImageUpload from "../../shared/components/FormElements/ImageUpload";
 import {
   VALIDATOR_REQUIRE,
   VALIDATOR_MINLENGTH,
@@ -15,11 +16,10 @@ import { useHttpClient } from "../../shared/hooks/http-hook";
 import { AuthContext } from "../../shared/context/auth-context";
 import "./PlaceForm.css";
 
-
 const UpdatePlace = () => {
   const auth = useContext(AuthContext);
   const placeId = useParams().placeId;
-  const history = useHistory()
+  const history = useHistory();
   const [loadedPlace, setLoadedPlace] = useState();
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
 
@@ -62,22 +62,21 @@ const UpdatePlace = () => {
     fetchPlace();
   }, [sendRequest, placeId, setFormData]);
 
-
-  const placeUpdateSubmitHandler = async event => {
+  const placeUpdateSubmitHandler = async (event) => {
     event.preventDefault();
     try {
       await sendRequest(
         `http://localhost:5001/api/places/${placeId}`,
-        'PATCH',
+        "PATCH",
         JSON.stringify({
           title: formState.inputs.title.value,
-          description: formState.inputs.description.value
+          description: formState.inputs.description.value,
         }),
         {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         }
       );
-      history.push('/' + auth.userId + '/places');
+      history.push("/" + auth.userId + "/places");
     } catch (err) {}
   };
 
@@ -98,6 +97,7 @@ const UpdatePlace = () => {
       </div>
     );
   }
+  console.log(loadedPlace)
 
   return (
     <React.Fragment>
@@ -123,6 +123,12 @@ const UpdatePlace = () => {
             errorText="Please enter a valid description (min. 5 characters)."
             onInput={inputHandler}
             initialValue={loadedPlace.description}
+            initialValid={true}
+          />
+          <ImageUpload
+            id="image"
+            onInput={inputHandler}
+            initialValue={loadedPlace.image}
             initialValid={true}
           />
           <Button type="submit" disabled={!formState.isValid}>

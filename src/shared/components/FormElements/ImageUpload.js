@@ -1,17 +1,43 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 
 import Button from "./Button";
-
 import "./ImageUpload.css";
 
 const ImageUpload = (props) => {
-  const filePickerRef = useRef();
+  const [file, setFile] = useState();
+  const [previewUrl, setPreviewUrl] = useState();
+  const [isValid, setIsValid] = useState(false);
 
-  const handlePicked = (event) => {
-    console.log(event.target);
+  const filePickerRef = useRef();
+  
+// allows to see preview of image file
+  useEffect(() => {
+    if (!file) {
+      return;
+    }
+    const fileReader = new FileReader();
+    fileReader.onload = () => {
+      setPreviewUrl(fileReader.result);
+    };
+    fileReader.readAsDataURL(file);
+  }, [file]);
+
+  const pickedHandler = (event) => {
+    let pickedFile;
+    let fileIsValid = isValid;
+    if (event.target.files && event.target.files.length === 1) {
+      pickedFile = event.target.files[0];
+      setFile(pickedFile);
+      setIsValid(true);
+      fileIsValid = true;
+    } else {
+      setIsValid(false);
+      fileIsValid = false;
+    }
+    props.onInput(props.id, pickedFile, fileIsValid);
   };
 
-  const handlePickImage = () => {
+  const pickImageHandler = () => {
     filePickerRef.current.click();
   };
 
@@ -20,19 +46,21 @@ const ImageUpload = (props) => {
       <input
         id={props.id}
         ref={filePickerRef}
-        type="file"
         style={{ display: "none" }}
-        accept=".jpg,.png,.jpeg,.svg"
-        onChange={handlePicked}
+        type="file"
+        accept=".jpg,.png,.jpeg"
+        onChange={pickedHandler}
       />
       <div className={`image-upload ${props.center && "center"}`}>
         <div className="image-upload__preview">
-          <img src="" alt="preview" />
+          {previewUrl && <img src={previewUrl} alt="Preview" />}
+          {!previewUrl && <p>Please pick an image.</p>}
         </div>
-        <Button type="button" onClick={handlePickImage}>
-          Pick Image
+        <Button type="button" onClick={pickImageHandler}>
+          PICK IMAGE
         </Button>
       </div>
+      {!isValid && <p>{props.errorText}</p>}
     </div>
   );
 };

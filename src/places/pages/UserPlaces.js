@@ -26,6 +26,7 @@ const UserPlaces = () => {
   }, [sendRequest, userId]);
 
   const placeDeletedHandler = deletedPlaceId => {
+    // creates new array where deleted place is filtered out
     setLoadedPlaces(prevPlaces => prevPlaces.filter(place => place.id !== deletedPlaceId ))
   }
 

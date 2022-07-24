@@ -6,33 +6,25 @@ import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 
 const Users = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState();
   const [loadedUsers, setLoadedUsers] = useState();
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
 
   useEffect(() => {
-    const sendRequest = async () => {
-      setIsLoading(true);
+    const fetchUsers = async () => {
       try {
-        const response = await fetch("http://localhost:5001/api/users");
-
-        const responseData = await response.json();
-
-        if (!response.ok) {
-          throw new Error(responseData.message);
-        }
+        const responseData = await sendRequest("http://localhost:5001/api/users");
 
         setLoadedUsers(responseData.users);
       } catch (err) {
-        setError(err.message);
       }
-      setIsLoading(false);
     };
-    sendRequest();
-  }, []);
+    fetchUsers();
+  }, [sendRequest]);
 
+
+  // could remove and just call clearError in onClear below, but will keep since other method is used in auth.js
   const errorHandler = () => {
-    setError(null);
+    clearError()
   };
 
   return (

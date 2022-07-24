@@ -7,7 +7,7 @@ export const useHttpClient = () => {
   //handles error incase page changed while making a request
   const activeHttpRequests = useRef([]);
 
-  //send request hook
+  //send request hook, UseCallback is important if hook used in another useEffect to avoid infinite loop
   const sendRequest = useCallback(
     async (url, method = "GET", body = null, headers = {}) => {
       setIsLoading(true);

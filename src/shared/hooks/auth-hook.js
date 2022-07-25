@@ -9,6 +9,7 @@ export const useAuth = () => {
 
   const login = useCallback((uid, token, expirationDate) => {
     setToken(token);
+    setUserId(uid);
     const tokenExpirationDate =
       expirationDate || new Date(new Date().getTime + 1000 * 60 * 60);
     setTokenExpirationDate(tokenExpirationDate);
@@ -20,7 +21,6 @@ export const useAuth = () => {
         expiration: tokenExpirationDate.toISOString(),
       })
     );
-    setUserId(uid);
   }, []);
 
   const logout = useCallback(() => {
@@ -31,7 +31,7 @@ export const useAuth = () => {
   }, []);
 
   useEffect(() => {
-    if (token) {
+    if (token && tokenExpirationDate) {
       const remainingTime =
         tokenExpirationDate.getTime() - new Date().getTime();
       logoutTimer = setTimeout(logout, remainingTime);

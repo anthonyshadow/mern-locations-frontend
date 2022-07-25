@@ -16,19 +16,21 @@ const UserPlaces = () => {
     const fetchUserPlaces = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:5001/api/places/user/${userId}`
+          `${process.env.REACT_APP_BACKEND_URL}/places/user/${userId}`
         );
 
-        setLoadedPlaces(responseData.places)
+        setLoadedPlaces(responseData.places);
       } catch (err) {}
     };
     fetchUserPlaces();
   }, [sendRequest, userId]);
 
-  const placeDeletedHandler = deletedPlaceId => {
+  const placeDeletedHandler = (deletedPlaceId) => {
     // creates new array where deleted place is filtered out
-    setLoadedPlaces(prevPlaces => prevPlaces.filter(place => place.id !== deletedPlaceId ))
-  }
+    setLoadedPlaces((prevPlaces) =>
+      prevPlaces.filter((place) => place.id !== deletedPlaceId)
+    );
+  };
 
   return (
     <React.Fragment>
@@ -38,7 +40,9 @@ const UserPlaces = () => {
           <LoadingSpinner />
         </div>
       )}
-      {!isLoading && loadedPlaces && (<PlaceList items={loadedPlaces} onDeletePlace={placeDeletedHandler}/>)}
+      {!isLoading && loadedPlaces && (
+        <PlaceList items={loadedPlaces} onDeletePlace={placeDeletedHandler} />
+      )}
     </React.Fragment>
   );
 };
